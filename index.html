@@ -2,258 +2,180 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Video + Botones</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pantalla Barrio</title>
   <style>
-    /* Reset básico */
-    * {
+    html, body {
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
-    }
-
-    body, html {
       height: 100%;
-      font-family: 'Poppins', sans-serif;
       overflow: hidden;
+      background: transparent;
+      font-family: 'Poppins', sans-serif;
     }
 
     /* Video de fondo */
-    .video-bg {
+    #fondo {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      overflow: hidden;
-      z-index: -1;
-      background: linear-gradient(180deg, #ff6f48 0%, #f4436f 100%);
-    }
-
-    .video-bg video {
-      width: 100%;
-      height: auto;
-      max-height: 100vh;
-      object-fit: contain;
-      display: block;
-      margin: 0 auto;
-    }
-
-    /* POPUPS DE RESEÑAS */
-    .review-popup {
-      position: fixed;
-      top: 720px; /* más abajo */
-      right: -400px;
-      width: 420px;
-      background: rgba(255, 255, 255, 0.95);
-      border-radius: 14px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.25);
-      padding: 45px 48px;
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      opacity: 0;
-      z-index: 2;
-    }
-
-    .review-popup img {
-      width: 65px;
-      height: 65px;
-      border-radius: 50%;
       object-fit: cover;
+      z-index: -999;
     }
 
-    .review-content {
-      flex: 1;
+    /* Contenedor lateral de comentarios */
+    .comentarios {
+      position: fixed;
+      top: 120px;
+      right: 0;
+      width: 35%; /* mucho más angosto */
+      max-width: 350px;
+      z-index: 10;
     }
 
-    .review-name {
-      font-size: 20px;
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-
-    .review-text {
-      font-size: 18px;
-      line-height: 1.4;
+    /* Tarjeta de comentario */
+    .comentario {
+      display: none;
+      background: #fff;
       color: #333;
-      margin-bottom: 6px;
-    }
-
-    .review-stars {
-      color: #ffb400;
-      font-size: 14px;
-    }
-
-    /* Animación secuencial en bucle */
-    @keyframes slideInOut {
-      0% { right: -400px; opacity: 0; }
-      5% { right: 20px; opacity: 1; }
-      25% { right: 20px; opacity: 1; }
-      30% { right: -400px; opacity: 0; }
-      100% { right: -400px; opacity: 0; }
-    }
-
-    .review-popup {
-      animation: slideInOut 20s infinite;
-    }
-
-    .review-popup:nth-child(1) { animation-delay: 0s; }
-    .review-popup:nth-child(2) { animation-delay: 5s; }
-    .review-popup:nth-child(3) { animation-delay: 10s; }
-    .review-popup:nth-child(4) { animation-delay: 15s; }
-
-    /* Contenedor de botones */
-    .button-container {
-      position: absolute;
-      top: 80%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      display: flex;
-      flex-direction: column;
-      gap: 25px;
-      z-index: 1;
-      width: 92%;
-      max-width: 1000px;
-    }
-
-    /* Estilo general de las tarjetas/botones */
-    .zone-button {
-      background: rgba(255, 255, 255, 0.9);
-      color: #000;
-      padding: 40px 100px;
-      border: none;
-      border-radius: 18px;
+      border-radius: 12px 0 0 12px;
+      padding: 10px 14px;
+      font-size: 0.95rem;
       box-shadow: 
-        inset 0 2px 6px rgba(255, 255, 255, 0.4),
-        0 6px 16px rgba(0, 0, 0, 0.4);
+        0 6px 12px rgba(0,0,0,0.25),
+        inset 0 3px 6px rgba(0,0,0,0.1);
+      animation: slideIn 0.7s ease forwards;
+    }
+
+    .header {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      text-align: left;
-      cursor: pointer;
-      backdrop-filter: blur(8px);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      opacity: 0;
-      transform: translateY(30px);
-      animation: fadeInUp 0.8s forwards;
-      text-decoration: none;
-    }
-
-    .zone-button:hover {
-      transform: scale(1.04);
-      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.5);
-    }
-
-    /* Texto dentro del botón */
-    .zone-content {
-      flex: 1;
-    }
-
-    .zone-content h2 {
-      font-size: 35px;
-      font-weight: 600;
       margin-bottom: 6px;
-      color: #111;
     }
 
-    .zone-content p {
-      font-size: 28px;
-      font-weight: 400;
-      line-height: 1.4;
-      color: #333;
+    .header img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 8px;
+      object-fit: cover;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.25);
     }
 
-    /* Icono */
-    .zone-button svg {
-      flex-shrink: 0;
-      fill: #000;
-      margin-left: 15px;
-      width: 34px;
-      height: 34px;
+    .nombre {
+      font-weight: bold;
+      font-size: 1rem;
     }
 
-    /* Animación de entrada */
-    @keyframes fadeInUp {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    .estrellas {
+      color: #f4b400;
+      font-size: 0.9rem;
+      margin: 4px 0 6px;
     }
 
-    /* Delays individuales */
-    .zone-button:nth-child(1) { animation-delay: 0.3s; }
-    .zone-button:nth-child(2) { animation-delay: 0.6s; }
-    .zone-button:nth-child(3) { animation-delay: 0.9s; }
-    .zone-button:nth-child(4) { animation-delay: 1.2s; }
-    .zone-button:nth-child(5) { animation-delay: 1.5s; }
+    .comentario p {
+      margin: 0;
+      font-size: 0.9rem;
+      line-height: 1.3;
+    }
 
-    /* Responsive */
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(100%); } 
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    /* Ajuste en móviles */
     @media (max-width: 600px) {
-      .zone-button {
-        padding: 18px 20px;
+      .comentarios {
+        width: 80%;
+        top: 100px;
       }
-      .zone-content h2 {
-        font-size: 18px;
+      .comentario {
+        font-size: 0.85rem;
+        padding: 8px 12px;
       }
-      .zone-content p {
-        font-size: 14px;
+      .header img {
+        width: 35px;
+        height: 35px;
+      }
+      .nombre {
+        font-size: 0.9rem;
+      }
+      .estrellas {
+        font-size: 0.85rem;
       }
     }
   </style>
 </head>
 <body>
-
   <!-- Video de fondo -->
-  <div class="video-bg">
-    <video autoplay muted loop playsinline>
-      <source src="Hola.mp4" type="video/mp4" />
-      Tu navegador no soporta el video.
-    </video>
-  </div>
+  <video id="fondo" autoplay muted loop playsinline>
+    <source src="Hola.mp4" type="video/mp4">
+    Tu navegador no soporta video en HTML5.
+  </video>
 
-  <!-- POPUPS DE RESEÑAS -->
-  <div class="review-popup">
-    <img src="https://i.pravatar.cc/45?img=12" alt="perfil">
-    <div class="review-content">
-      <div class="review-name">Camilo Torres</div>
-      <div class="review-text">Aquí encontré muy buenas ofertas en mi barrio.</div>
-      <div class="review-stars">★★★★★</div>
+  <!-- Comentarios -->
+  <div class="comentarios">
+    <div class="comentario">
+      <div class="header">
+        <img src="https://randomuser.me/api/portraits/women/45.jpg" alt="Stefania">
+        <div class="nombre">Stefania Cadena</div>
+      </div>
+      <div class="estrellas">⭐⭐⭐⭐⭐</div>
+      <p>Es genial, aquí encontré todo en mi barrio gracias a la app Mi Barrio.</p>
+    </div>
+
+    <div class="comentario">
+      <div class="header">
+        <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Adriana">
+        <div class="nombre">Adriana Solano</div>
+      </div>
+      <div class="estrellas">⭐⭐⭐⭐⭐</div>
+      <p>Con Mi Barrio descubrí comercios y ofertas que no conocía.</p>
+    </div>
+
+    <div class="comentario">
+      <div class="header">
+        <img src="https://randomuser.me/api/portraits/women/25.jpg" alt="Sarita">
+        <div class="nombre">Sarita Cadena</div>
+      </div>
+      <div class="estrellas">⭐⭐⭐⭐</div>
+      <p>Me encanta poder acceder a los servicios de mi barrio desde una sola app.</p>
+    </div>
+
+    <div class="comentario">
+      <div class="header">
+        <img src="https://randomuser.me/api/portraits/men/50.jpg" alt="Camilo">
+        <div class="nombre">Camilo Torres</div>
+      </div>
+      <div class="estrellas">⭐⭐⭐⭐⭐</div>
+      <p>Muy útil, encontré rápidamente lo que necesitaba cerca de casa.</p>
+    </div>
+
+    <div class="comentario">
+      <div class="header">
+        <img src="https://randomuser.me/api/portraits/women/30.jpg" alt="Paula">
+        <div class="nombre">Paula Herrera</div>
+      </div>
+      <div class="estrellas">⭐⭐⭐⭐⭐</div>
+      <p>Excelente aplicación, ahora todo lo de mi barrio está en mi celular.</p>
     </div>
   </div>
 
-  <div class="review-popup">
-    <img src="https://i.pravatar.cc/45?img=47" alt="perfil">
-    <div class="review-content">
-      <div class="review-name">Adriana Solano</div>
-      <div class="review-text">Excelente app, me conecta con todo el comercio local.</div>
-      <div class="review-stars">★★★★★</div>
-    </div>
-  </div>
+  <script>
+    let indice = 0;
+    const comentarios = document.querySelectorAll(".comentario");
 
-  <div class="review-popup">
-    <img src="https://i.pravatar.cc/45?img=22" alt="perfil">
-    <div class="review-content">
-      <div class="review-name">Luis Fernando</div>
-      <div class="review-text">Muy útil para encontrar servicios rápidos en la zona.</div>
-      <div class="review-stars">★★★★☆</div>
-    </div>
-  </div>
+    function mostrarComentario() {
+      comentarios.forEach(c => c.style.display = "none");
+      comentarios[indice].style.display = "block";
+      indice = (indice + 1) % comentarios.length;
+    }
 
-  <div class="review-popup">
-    <img src="https://i.pravatar.cc/45?img=32" alt="perfil">
-    <div class="review-content">
-      <div class="review-name">Paula Herrera</div>
-      <div class="review-text">La mejor app para conocer negocios cercanos, la recomiendo.</div>
-      <div class="review-stars">★★★★★</div>
-    </div>
-  </div>
-
-  <!-- Contenedor de botones vacío -->
-  <div class="button-container">
-    <!-- Botones eliminados según solicitud -->
-  </div>
-
+    mostrarComentario();
+    setInterval(mostrarComentario, 4000);
+  </script>
 </body>
 </html>
-
