@@ -1,181 +1,133 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pantalla Barrio</title>
+  <meta charset="UTF-8">
+  <title>Secuencia de Videos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    html, body {
+    body, html {
       margin: 0;
       padding: 0;
       height: 100%;
-      overflow: hidden;
-      background: transparent;
-      font-family: 'Poppins', sans-serif;
-    }
-
-    /* Video de fondo */
-    #fondo {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      z-index: -999;
-    }
-
-    /* Contenedor lateral de comentarios */
-    .comentarios {
-      position: fixed;
-      top: 120px;
-      right: 0;
-      width: 35%; /* mucho más angosto */
-      max-width: 350px;
-      z-index: 10;
-    }
-
-    /* Tarjeta de comentario */
-    .comentario {
-      display: none;
-      background: #fff;
-      color: #333;
-      border-radius: 12px 0 0 12px;
-      padding: 10px 14px;
-      font-size: 0.95rem;
-      box-shadow: 
-        0 6px 12px rgba(0,0,0,0.25),
-        inset 0 3px 6px rgba(0,0,0,0.1);
-      animation: slideIn 0.7s ease forwards;
-    }
-
-    .header {
+      background: url('https://i.imgur.com/wJ9xXfF.png') no-repeat center center fixed;
+      background-size: cover;
       display: flex;
-      align-items: center;
-      margin-bottom: 6px;
+      justify-content: center;
+      align-items: flex-start; /* Alinear el contenedor del video arriba */
+      overflow: hidden;
     }
 
-    .header img {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      margin-right: 8px;
+    /* === AGREGADO: Contenedor para video y botón === */
+    #videoContainer {
+      position: relative; /* Base para el posicionamiento absoluto del botón */
+      width: 100%;
+      max-height: 50vh;
+      display: flex; /* Para asegurar que el video dentro se comporte bien */
+    }
+
+    video {
+      width: 100%;
+      max-height: 50vh;
       object-fit: cover;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.25);
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+    }
+    video.visible {
+      opacity: 1;
+    }
+    
+    #nextBtn {
+      /* === INICIO DE CAMBIOS EN EL BOTÓN === */
+      position: absolute; /* Posición relativa al #videoContainer */
+      left: 20px;
+      bottom: 20px;
+      z-index: 10; /* Asegura que esté sobre el video */
+
+      font-family: 'Poppins', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: white;
+      /* Color solicitado */
+      background: linear-gradient(180deg, #ff6f48 0%, #f4436f 100%);
+      border: none;
+      padding: 12px 28px;
+      border-radius: 50px;
+      cursor: pointer;
+      /* Sombra más sutil para el nuevo estilo */
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      transition: all 0.2s ease-in-out;
+      /* === FIN DE CAMBIOS EN EL BOTÓN === */
     }
 
-    .nombre {
-      font-weight: bold;
-      font-size: 1rem;
+    #nextBtn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    }
+    
+    /* === AGREGADO: Clase y Keyframes para la animación === */
+    .animate {
+       animation: rubberBand 1s;
     }
 
-    .estrellas {
-      color: #f4b400;
-      font-size: 0.9rem;
-      margin: 4px 0 6px;
-    }
-
-    .comentario p {
-      margin: 0;
-      font-size: 0.9rem;
-      line-height: 1.3;
-    }
-
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateX(100%); } 
-      to { opacity: 1; transform: translateX(0); }
-    }
-
-    /* Ajuste en móviles */
-    @media (max-width: 600px) {
-      .comentarios {
-        width: 80%;
-        top: 100px;
-      }
-      .comentario {
-        font-size: 0.85rem;
-        padding: 8px 12px;
-      }
-      .header img {
-        width: 35px;
-        height: 35px;
-      }
-      .nombre {
-        font-size: 0.9rem;
-      }
-      .estrellas {
-        font-size: 0.85rem;
-      }
+    @keyframes rubberBand {
+      0% { transform: scale3d(1, 1, 1); }
+      30% { transform: scale3d(1.25, 0.75, 1); }
+      40% { transform: scale3d(0.75, 1.25, 1); }
+      50% { transform: scale3d(1.15, 0.85, 1); }
+      65% { transform: scale3d(0.95, 1.05, 1); }
+      75% { transform: scale3d(1.05, 0.95, 1); }
+      100% { transform: scale3d(1, 1, 1); }
     }
   </style>
 </head>
 <body>
-  <!-- Video de fondo -->
-  <video id="fondo" autoplay muted loop playsinline>
-    <source src="Hola.mp4" type="video/mp4">
-    Tu navegador no soporta video en HTML5.
-  </video>
 
-  <!-- Comentarios -->
-  <div class="comentarios">
-    <div class="comentario">
-      <div class="header">
-        <img src="https://randomuser.me/api/portraits/women/45.jpg" alt="Stefania">
-        <div class="nombre">Stefania Cadena</div>
-      </div>
-      <div class="estrellas">⭐⭐⭐⭐⭐</div>
-      <p>Es genial, aquí encontré todo en mi barrio gracias a la app Mi Barrio.</p>
-    </div>
-
-    <div class="comentario">
-      <div class="header">
-        <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Adriana">
-        <div class="nombre">Adriana Solano</div>
-      </div>
-      <div class="estrellas">⭐⭐⭐⭐⭐</div>
-      <p>Con Mi Barrio descubrí comercios y ofertas que no conocía.</p>
-    </div>
-
-    <div class="comentario">
-      <div class="header">
-        <img src="https://randomuser.me/api/portraits/women/25.jpg" alt="Sarita">
-        <div class="nombre">Sarita Cadena</div>
-      </div>
-      <div class="estrellas">⭐⭐⭐⭐</div>
-      <p>Me encanta poder acceder a los servicios de mi barrio desde una sola app.</p>
-    </div>
-
-    <div class="comentario">
-      <div class="header">
-        <img src="https://randomuser.me/api/portraits/men/50.jpg" alt="Camilo">
-        <div class="nombre">Camilo Torres</div>
-      </div>
-      <div class="estrellas">⭐⭐⭐⭐⭐</div>
-      <p>Muy útil, encontré rápidamente lo que necesitaba cerca de casa.</p>
-    </div>
-
-    <div class="comentario">
-      <div class="header">
-        <img src="https://randomuser.me/api/portraits/women/30.jpg" alt="Paula">
-        <div class="nombre">Paula Herrera</div>
-      </div>
-      <div class="estrellas">⭐⭐⭐⭐⭐</div>
-      <p>Excelente aplicación, ahora todo lo de mi barrio está en mi celular.</p>
-    </div>
+  <div id="videoContainer">
+    <video id="videoPlayer" muted playsinline></video>
+    <button id="nextBtn">siguiente</button>
   </div>
-
+  
   <script>
-    let indice = 0;
-    const comentarios = document.querySelectorAll(".comentario");
+    const videos = ["video1.mp4", "video2.mp4", "video3.mp4", "video4.mp4", "video5.mp4"];
+    let currentVideo = 0;
+    const player = document.getElementById("videoPlayer");
+    const nextButton = document.getElementById("nextBtn");
+    let videoTimeout;
 
-    function mostrarComentario() {
-      comentarios.forEach(c => c.style.display = "none");
-      comentarios[indice].style.display = "block";
-      indice = (indice + 1) % comentarios.length;
+    function playVideo(index) {
+      player.classList.remove("visible");
+      setTimeout(() => {
+        player.src = videos[index];
+        player.load();
+        player.play();
+        player.classList.add("visible");
+      }, 200);
     }
 
-    mostrarComentario();
-    setInterval(mostrarComentario, 4000);
+    function advanceToNext() {
+      clearTimeout(videoTimeout); 
+      currentVideo = (currentVideo + 1) % videos.length;
+      playVideo(currentVideo);
+      
+      // === AGREGADO: Disparar la animación en el botón ===
+      nextButton.classList.add('animate');
+    }
+
+    player.addEventListener("loadeddata", () => {
+      clearTimeout(videoTimeout);
+      videoTimeout = setTimeout(advanceToNext, 8000);
+    });
+    
+    nextButton.addEventListener("click", advanceToNext);
+
+    // === AGREGADO: Limpiar la clase de animación para que pueda repetirse ===
+    nextButton.addEventListener('animationend', () => {
+      nextButton.classList.remove('animate');
+    });
+
+    playVideo(currentVideo);
   </script>
 </body>
 </html>
